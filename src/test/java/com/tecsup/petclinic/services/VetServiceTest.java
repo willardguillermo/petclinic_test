@@ -180,4 +180,35 @@ public class VetServiceTest {
         assertTrue(vets.stream().allMatch(VetDTO::getActive));
         assertTrue(vets.stream().noneMatch(vet -> vet.getId() == 6));
     }
+    // ---------------- Integrante C: Casos de error ----------------
+
+    @Test
+    public void testFindVetById_NotFound() {
+        Integer ID_NOT_FOUND = 9999;
+
+        assertThrows(
+                VetNotFoundException.class,
+                () -> vetService.findById(ID_NOT_FOUND)
+        );
+    }
+
+    @Test
+    public void testDeactivateVet_NotFound() {
+        Integer ID_NOT_FOUND = 9999;
+
+        assertThrows(
+                VetNotFoundException.class,
+                () -> vetService.deactivate(ID_NOT_FOUND)
+        );
+    }
+    @Test
+    public void testFindInactiveVets() throws VetNotFoundException {
+        vetService.deactivate(1);
+
+        List<VetDTO> inactiveVets = vetService.findInactiveVets();
+
+        assertFalse(inactiveVets.isEmpty());
+        assertTrue(inactiveVets.stream().noneMatch(VetDTO::getActive));
+        assertTrue(inactiveVets.stream().anyMatch(vet -> vet.getId().equals(1)));
+    }
 }

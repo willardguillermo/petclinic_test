@@ -10,4 +10,5 @@ import java.util.List;
 public interface VetRepository extends JpaRepository<Vet, Integer> {
 
     List<Vet> findByActiveTrue();
+    List<Vet> findByActiveFalse();
 }

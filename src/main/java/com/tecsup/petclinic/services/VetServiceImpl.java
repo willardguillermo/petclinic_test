@@ -55,4 +55,29 @@ public class VetServiceImpl implements VetService {
                 .map(vetMapper::mapToDto)
                 .toList();
     }
+
+    @Override
+    public VetDTO deactivate(Integer id) throws VetNotFoundException {
+        return changeActive(id, false);
+    }
+
+    @Override
+    public VetDTO reactivate(Integer id) throws VetNotFoundException {
+        return changeActive(id, true);
+    }
+
+    @Override
+    public List<VetDTO> findActiveVets() {
+        return vetRepository.findByActiveTrue()
+                .stream()
+                .map(vetMapper::mapToDto)
+                .toList();
+    }
+
+    private VetDTO changeActive(Integer id, boolean active) throws VetNotFoundException {
+        Vet vet = vetRepository.findById(id)
+                .orElseThrow(() -> new VetNotFoundException("Vet not found: " + id));
+        vet.setActive(active);
+        return vetMapper.mapToDto(vetRepository.save(vet));
+    }
 }

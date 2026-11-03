@@ -16,4 +16,10 @@ public interface VetService {
     VetDTO findById(Integer id) throws VetNotFoundException;
 
     List<VetDTO> findAll();
+
+    VetDTO deactivate(Integer id) throws VetNotFoundException;
+
+    VetDTO reactivate(Integer id) throws VetNotFoundException;
+
+    List<VetDTO> findActiveVets();
 }

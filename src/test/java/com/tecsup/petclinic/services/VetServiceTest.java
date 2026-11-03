@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -141,5 +142,42 @@ public class VetServiceTest {
         // ------------ Validation ---------------
         assertThrows(VetNotFoundException.class,
                 () -> this.vetService.findById(newVetDTO.getId()));
+    }
+
+    // ---------------- Integrante B : Soft delete y reactivación ----------------
+
+    @Test
+    public void testDeactivateVet() throws VetNotFoundException {
+
+        VetDTO deactivated = vetService.deactivate(1);
+        log.info("VET DEACTIVATED : {}", deactivated);
+
+        VetDTO found = vetService.findById(1);       // el registro sigue existiendo
+
+        assertNotNull(found);
+        assertEquals("Carter", found.getLastName());
+        assertFalse(found.getActive());
+    }
+
+    @Test
+    public void testReactivateVet() throws VetNotFoundException {
+
+        assertFalse(vetService.findById(6).getActive());
+
+        VetDTO reactivated = vetService.reactivate(6);
+        log.info("VET REACTIVATED : {}", reactivated);
+
+        assertTrue(vetService.findById(6).getActive());
+    }
+
+    @Test
+    public void testFindActiveVets() {
+
+        List<VetDTO> vets = vetService.findActiveVets();
+        vets.forEach(vet -> log.info("ACTIVE : {}", vet));
+
+        assertFalse(vets.isEmpty());
+        assertTrue(vets.stream().allMatch(VetDTO::getActive));
+        assertTrue(vets.stream().noneMatch(vet -> vet.getId() == 6));
     }
 }

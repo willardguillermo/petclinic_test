@@ -22,4 +22,6 @@ public interface VetService {
     VetDTO reactivate(Integer id) throws VetNotFoundException;
 
     List<VetDTO> findActiveVets();
+
+    List<VetDTO> findInactiveVets();
 }
